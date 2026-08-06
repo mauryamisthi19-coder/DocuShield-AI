@@ -16,14 +16,16 @@ import java.nio.file.StandardCopyOption;
 
 @Service
 public class DocumentService {
-
+    private final PdfExtractionService pdfExtractionService;
     private final DocumentRepository documentRepository;
 
     @Value("${file.upload-dir}")
     private String uploadDir;
 
-    public DocumentService(DocumentRepository documentRepository) {
+    public DocumentService(DocumentRepository documentRepository,
+                           PdfExtractionService pdfExtractionService) {
         this.documentRepository = documentRepository;
+        this.pdfExtractionService = pdfExtractionService;
     }
 
     public DocumentResponse uploadDocument(MultipartFile file,
@@ -39,11 +41,14 @@ public class DocumentService {
         Files.copy(file.getInputStream(),
                 filePath,
                 StandardCopyOption.REPLACE_EXISTING);
+        String extractedText =
+                pdfExtractionService.extractText(filePath.toString());
 
         Document document = Document.builder()
                 .fileName(fileName)
                 .fileType(file.getContentType())
                 .fileSize(file.getSize())
+                .extractedText(extractedText)
                 .filePath(filePath.toString())
                 .uploadedBy(authentication.getName())
                 .status("UPLOADED")

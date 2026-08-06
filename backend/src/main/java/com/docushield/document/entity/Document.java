@@ -27,4 +27,6 @@ public class Document {
     private String status;
 
     private String filePath;
+    @Column(columnDefinition = "TEXT")
+    private String extractedText;
 }

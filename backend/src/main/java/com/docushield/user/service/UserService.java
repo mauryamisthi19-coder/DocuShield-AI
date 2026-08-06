@@ -25,18 +25,23 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
     }
-
     public String registerUser(UserRegistrationRequest request) {
 
         if (userRepository.existsByEmail(request.getEmail())) {
             return "Email already registered";
         }
 
+        System.out.println("REGISTER PASSWORD = " + request.getPassword());
+
+        String encodedPassword = passwordEncoder.encode(request.getPassword());
+
+        System.out.println("ENCODED PASSWORD = " + encodedPassword);
+
         User user = new User();
 
         user.setFullName(request.getFullName());
         user.setEmail(request.getEmail());
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setPassword(encodedPassword);
         user.setRole(Role.OFFICER);
 
         userRepository.save(user);
@@ -47,20 +52,20 @@ public class UserService {
     public LoginResponse login(LoginRequest request) {
 
         System.out.println("===== LOGIN START =====");
-        System.out.println("Email entered: " + request.getEmail());
+        System.out.println("Email entered = " + request.getEmail());
+        System.out.println("Password entered = " + request.getPassword());
 
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new RuntimeException("Email not found"));
 
-        System.out.println("DB Email: " + user.getEmail());
-        System.out.println("DB Password: " + user.getPassword());
+        System.out.println("Stored Hash = " + user.getPassword());
 
         boolean match = passwordEncoder.matches(
                 request.getPassword(),
                 user.getPassword()
         );
 
-        System.out.println("Password Match: " + match);
+        System.out.println("Password Match = " + match);
 
         if (!match) {
             throw new RuntimeException("Invalid email or password");
@@ -68,9 +73,6 @@ public class UserService {
 
         String token = jwtService.generateToken(user.getEmail());
 
-        return new LoginResponse(
-                "Login Successful",
-                token
-        );
+        return new LoginResponse("Login Successful", token);
     }
 }

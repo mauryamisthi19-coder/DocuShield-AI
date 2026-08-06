@@ -9,5 +9,4 @@ public class DocushieldApiApplication {
     public static void main(String[] args) {
         SpringApplication.run(DocushieldApiApplication.class, args);
     }
-
 }

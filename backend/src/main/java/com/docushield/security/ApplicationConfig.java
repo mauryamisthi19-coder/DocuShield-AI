@@ -8,6 +8,7 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.client.RestClient;
 
 @Configuration
 public class ApplicationConfig {
@@ -36,5 +37,9 @@ public class ApplicationConfig {
             AuthenticationConfiguration configuration) throws Exception {
 
         return configuration.getAuthenticationManager();
+    }
+    @Bean
+    public RestClient.Builder restClientBuilder() {
+        return RestClient.builder();
     }
 }
