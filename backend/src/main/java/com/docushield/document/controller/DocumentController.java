@@ -26,4 +26,13 @@ public class DocumentController {
 
         return documentService.uploadDocument(file, authentication);
     }
+    @GetMapping("/test")
+    public String test(Authentication authentication) {
+
+        if (authentication == null) {
+            return "Authentication is NULL";
+        }
+
+        return "Logged in as: " + authentication.getName();
+    }
 }
